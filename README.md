@@ -4,7 +4,7 @@
 
 SWAPI Favorites permite buscar personajes del universo Star Wars utilizando la API SWAPI, guardar tus favoritos en una base de datos, y gestionarlos con paginación.
 
-![Tests](https://github.com/Denwort/swapi-favorites/workflows/Tests/badge.svg)
+![Tests](https://github.com/Denwort/seidor/actions/workflows/test.yml/badge.svg)
 
 ## 🛠️ Tecnologías Utilizadas
 
