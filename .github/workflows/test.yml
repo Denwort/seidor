@@ -13,7 +13,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend
-          pip install -r layers/common/requirements.txt
+          pip install -r layers/dependencies/requirements.txt
       - name: Run tests
         run: |
           cd backend
