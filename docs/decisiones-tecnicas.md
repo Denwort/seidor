@@ -1,6 +1,4 @@
-# Decisiones Técnicas - SWAPI Favorites
-
-**Documento de arquitectura y decisiones técnicas para el challenge SEIDOR**
+# Decisiones Técnicas 
 
 ## 1. Backend: Python + AWS SAM
 

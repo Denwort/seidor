@@ -19,7 +19,6 @@ SWAPI Favorites permite buscar personajes del universo Star Wars utilizando la A
 - **React 18** - Biblioteca de UI
 - **TypeScript** - Tipado estático
 - **Vite** - Build tool y dev server
-- **Axios** - Cliente HTTP
 
 ### Base de Datos
 - **MariaDB** - Base de datos relacional
@@ -79,8 +78,8 @@ cd frontend
 # Instalar dependencias
 npm i
 
-# Copiar archivo de variables de entorno, verificando que VITE_API_BASE_URL apunte a http://localhost:3000
-cp .env.example .env
+# De ser necesario, modificar las variables de entorno: VITE_API_BASE_URL apunte a http://localhost:3000
+# cp .env.example .env
 
 # Iniciar servidor de desarrollo
 npm run dev
@@ -148,7 +147,7 @@ Abrir el navegador en `http://localhost:5173`
 ```bash
 cd backend
 
-# Instalar dependencias de desarrollo
+# Instalar dependencias
 pip install -r layers/dependencies/requirements.txt
 
 # Ejecutar tests
@@ -160,6 +159,9 @@ pytest
 ```bash
 cd frontend
 
+# Instalar dependencias
+npm i
+
 # Ejecutar tests
 npm test
 ```
@@ -167,15 +169,15 @@ npm test
 
 ## ☁️ Despliegue
 
-**AWS MariaDB:** 
+**MariaDB(AWS):** 
 
 database-1.c5igsk4iutw7.us-east-2.rds.amazonaws.com
 
-**Backend AWS Lambda:** 
+**Backend (AWS):** 
 
 https://9p06rg2kr8.execute-api.us-east-2.amazonaws.com/Prod/
 
-**Frontend Vite Netlify:** 
+**Frontend(Netlify):** 
 
 https://699218820daa0f1126996ca7--benevolent-nasturtium-778a5a.netlify.app
 
@@ -210,7 +212,7 @@ seidor/
 
 ## 📚 Documentación Adicional
 
-- [Decisiones Técnicas](docs/DECISIONES_TECNICAS.md)
+- [Decisiones Técnicas](docs/decisiones-tecnicas.md)
 - [Documentación API](backend/openapi.yaml)
 
 ---
