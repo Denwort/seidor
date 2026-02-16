@@ -1,0 +1,122 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  backend
+
+  Sample SAM Template for backend
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.11
+    Environment:
+      Variables:
+        DB_HOST: !Ref DBHost
+        DB_USER: !Ref DBUser
+        DB_PASSWORD: !Ref DBPassword
+        DB_NAME: !Ref DBName
+        DB_PORT: !Ref DBPort
+    Layers:
+      - !Ref CommonLayer
+      - !Ref DependenciesLayer
+  Api:
+    Cors:
+      AllowMethods: "'GET,POST,DELETE,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+      AllowOrigin: "'*'"
+
+Parameters:
+  DBHost:
+    Type: String
+    Default: 192.168.1.49
+  DBUser:
+    Type: String
+    Default: appuser
+  DBPassword:
+    Type: String
+    Default: apppass
+    NoEcho: true
+  DBName:
+    Type: String
+    Default: swapi_favorites
+  DBPort:
+    Type: String
+    Default: '3306'
+
+Resources:
+  CommonLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Common utilities
+      ContentUri: layers/common
+      CompatibleRuntimes:
+        - python3.11
+    Metadata:
+      BuildMethod: python3.11
+
+  DependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Common dependencies
+      ContentUri: layers/dependencies
+      CompatibleRuntimes:
+        - python3.11
+    Metadata:
+      BuildMethod: python3.11
+
+  GetCharactersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/get_characters/
+      Handler: app.lambda_handler
+      Events:
+        GetCharacters:
+          Type: Api
+          Properties:
+            Path: /characters
+            Method: get
+
+  AddFavoriteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/add_favorite/
+      Handler: app.lambda_handler
+      Events:
+        AddFavorite:
+          Type: Api
+          Properties:
+            Path: /favorites
+            Method: post
+
+  GetFavoritesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/get_favorites/
+      Handler: app.lambda_handler
+      Events:
+        GetFavorites:
+          Type: Api
+          Properties:
+            Path: /favorites
+            Method: get
+
+  RemoveFavoriteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/remove_favorite/
+      Handler: app.lambda_handler
+      Events:
+        DeleteFavorite:
+          Type: Api
+          Properties:
+            Path: /favorites/{characterId}
+            Method: delete
+
+Outputs:
+  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+  # Find out more about other implicit resources you can reference within SAM
+  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+  ApiUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

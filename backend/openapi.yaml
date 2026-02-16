@@ -1,0 +1,340 @@
+openapi: 3.0.0
+info:
+  title: SWAPI Favorites API
+  description: |
+    REST API for managing Star Wars character favorites.
+    
+    This API allows users to:
+    - Search for Star Wars characters from SWAPI
+    - Add characters to their favorites list
+    - View paginated favorites
+    - Remove characters from favorites
+    
+    All characters are sourced from the Star Wars API (SWAPI).
+  version: 1.0.0
+  contact:
+    name: David
+    email: support@example.com
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://<id>.execute-api.us-east-1.amazonaws.com/Prod
+    description: Production server (AWS)
+
+tags:
+  - name: characters
+    description: Character search operations
+  - name: favorites
+    description: Favorites management operations
+
+paths:
+  /characters:
+    get:
+      summary: Search characters
+      description: |
+        Search for Star Wars characters from SWAPI. 
+        Results exclude characters already added to favorites.
+        Supports pagination through SWAPI's native pagination.
+      tags:
+        - characters
+      parameters:
+        - name: search
+          in: query
+          description: Character name to search for (partial match)
+          required: false
+          schema:
+            type: string
+            example: "luke"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      characters:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Character'
+                      total:
+                        type: integer
+                        description: Total count of characters found
+                        example: 10
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /favorites:
+    get:
+      summary: Get favorites list
+      description: |
+        Retrieve paginated list of favorite characters.
+        Results are ordered by creation date (newest first).
+      tags:
+        - favorites
+      parameters:
+        - name: page
+          in: query
+          description: Page number
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: pageSize
+          in: query
+          description: Number of items per page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/FavoriteCharacter'
+                      pagination:
+                        $ref: '#/components/schemas/Pagination'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Add character to favorites
+      description: |
+        Add a character to the favorites list by providing their SWAPI character ID.
+        The character data is fetched from SWAPI and stored in the database.
+        Duplicate favorites are prevented by a UNIQUE constraint.
+      tags:
+        - favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - characterId
+              properties:
+                characterId:
+                  type: string
+                  description: SWAPI character ID
+                  example: "1"
+      responses:
+        '201':
+          description: Character added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    $ref: '#/components/schemas/FavoriteCharacter'
+                  message:
+                    type: string
+                    example: "Character added to favorites successfully"
+        '400':
+          description: Bad request (invalid ID or already in favorites)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                missingId:
+                  value:
+                    success: false
+                    error: "characterId is required"
+                duplicate:
+                  value:
+                    success: false
+                    error: "Character is already in favorites"
+        '404':
+          description: Character not found in SWAPI
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: "Character not found in SWAPI"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /favorites/{characterId}:
+    delete:
+      summary: Remove character from favorites
+      description: |
+        Remove a character from the favorites list by their character ID.
+      tags:
+        - favorites
+      parameters:
+        - name: characterId
+          in: path
+          required: true
+          description: Character ID to remove
+          schema:
+            type: string
+            example: "1"
+      responses:
+        '200':
+          description: Character removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  data:
+                    type: object
+                    properties:
+                      characterId:
+                        type: string
+                        example: "1"
+                  message:
+                    type: string
+                    example: "Favorite removed successfully"
+        '404':
+          description: Favorite not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                success: false
+                error: "Favorite not found"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Character:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Character ID from SWAPI
+          example: "1"
+        name:
+          type: string
+          example: "Luke Skywalker"
+        height:
+          type: string
+          description: Height in centimeters
+          example: "172"
+        mass:
+          type: string
+          description: Mass in kilograms
+          example: "77"
+        hairColor:
+          type: string
+          example: "blond"
+        skinColor:
+          type: string
+          example: "fair"
+        eyeColor:
+          type: string
+          example: "blue"
+        birthYear:
+          type: string
+          example: "19BBY"
+        gender:
+          type: string
+          example: "male"
+
+    FavoriteCharacter:
+      allOf:
+        - $ref: '#/components/schemas/Character'
+        - type: object
+          properties:
+            favoriteId:
+              type: integer
+              description: Internal favorite ID
+              example: 1
+            addedAt:
+              type: string
+              format: date-time
+              description: Timestamp when added to favorites
+              example: "2026-02-14T10:30:00Z"
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          description: Current page number
+          example: 1
+        pageSize:
+          type: integer
+          description: Items per page
+          example: 10
+        total:
+          type: integer
+          description: Total number of items
+          example: 25
+        totalPages:
+          type: integer
+          description: Total number of pages
+          example: 3
+
+    Error:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: false
+        error:
+          type: string
+          description: Error message
+          example: "An error occurred"
+
+  responses:
+    BadRequest:
+      description: Bad request - Invalid parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            success: false
+            error: "Internal server error"
+
+# Global security (commented out for now as API is public)
+# security:
+#   - ApiKeyAuth: []

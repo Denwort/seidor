@@ -1,0 +1,41 @@
+# More information about the configuration file can be found here:
+# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-config.html
+version = 0.1
+
+[default.global.parameters]
+stack_name = "backend"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.validate.parameters]
+lint = true
+
+[default.deploy.parameters]
+capabilities = "CAPABILITY_IAM"
+confirm_changeset = true
+resolve_s3 = true
+s3_prefix = "backend"
+region = "us-east-2"
+parameter_overrides = "DBHost=\"database-1.c5igsk4iutw7.us-east-2.rds.amazonaws.com\" DBUser=\"admin\" DBName=\"swapi_favorites\" DBPort=\"3306\""
+image_repositories = []
+
+[default.package.parameters]
+resolve_s3 = true
+
+[default.sync.parameters]
+watch = true
+
+[default.local_start_api.parameters]
+warm_containers = "EAGER"
+parameter_overrides = [
+  "DBHost=host.docker.internal",
+  "DBUser=appuser",
+  "DBPassword=apppass",
+  "DBName=swapi_favorites",
+  "DBPort=3306"
+]
+
+[default.local_start_lambda.parameters]
+warm_containers = "EAGER"
