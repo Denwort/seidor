@@ -39,8 +39,8 @@ Antes de comenzar, tener instalado:
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone <url-del-repositorio>
-cd swapi-favorites
+git clone https://github.com/Denwort/seidor/
+cd seidor
 ```
 
 ### 2. Configurar Base de Datos
@@ -183,7 +183,7 @@ https://699218820daa0f1126996ca7--benevolent-nasturtium-778a5a.netlify.app
 ## 📁 Estructura del Proyecto
 
 ```
-swapi-favorites/
+seidor/
 ├── backend/
 │   ├── functions/               # Funciones Lambda
 │   │   ├── get_characters/      # Búsqueda de personajes
