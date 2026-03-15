@@ -4,7 +4,7 @@
 
 SWAPI Favorites permite buscar personajes del universo Star Wars utilizando la API SWAPI, guardar tus favoritos en una base de datos, y gestionarlos con paginación.
 
-![Tests](https://github.com/Denwort/seidor/actions/workflows/test.yml/badge.svg)
+![Tests](https://github.com/Denwort/swapi_aws/actions/workflows/test.yml/badge.svg)
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -38,8 +38,8 @@ Antes de comenzar, tener instalado:
 ### 1. Clonar el Repositorio
 
 ```bash
-git clone https://github.com/Denwort/seidor/
-cd seidor
+git clone https://github.com/Denwort/swapi_aws/
+cd swapi_aws
 ```
 
 ### 2. Configurar Base de Datos
@@ -185,7 +185,7 @@ https://699218820daa0f1126996ca7--benevolent-nasturtium-778a5a.netlify.app
 ## 📁 Estructura del Proyecto
 
 ```
-seidor/
+swapi_aws/
 ├── backend/
 │   ├── functions/               # Funciones Lambda
 │   │   ├── get_characters/      # Búsqueda de personajes
